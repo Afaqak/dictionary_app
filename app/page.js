@@ -1,113 +1,108 @@
+'use client'
+import Nav from './nav'
+import Searchbar from './searchbar'
+import { useState } from 'react'
+import Fonts from '@/utils/fonts'
+import { useContext } from 'react'
+import { FontContext } from './fontcontext'
+import { ThemeContext } from './themeContext'
 import Image from 'next/image'
-
 export default function Home() {
+  const [meaning, setMeaning] = useState([])
+  const { font } = useContext(FontContext)
+  const { theme } = useContext(ThemeContext)
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <main
+  
+    className={` ${
+        theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'
+      }
+    `}>
+      <div className={`flex min-h-screen flex-col mx-auto bg-[hsl(0 0% 100% / 4)] 
+      max-w-3xl py-12 px-4 sm:px-6 lg:px-8 ${Fonts[font]} ${
+        theme === 'dark' ? 'bg-black text-white' : 'bg-white text-black'
+      }
+    `}>
+      <Nav />
+      <Searchbar 
+   
+      setMeaning={setMeaning}
+      />
+      <div className='flex justify-between  gap-4'>
+        <div>
+      <h1 className={`text-6xl font-semibold 
+      ${theme === 'dark' ? 'text-white' : 'text-black'}
+      `}>{meaning?.word}</h1>
+      <h1 className='text-2xl font-semibold text-purple-600'>{meaning?.phonetic}</h1>
+      </div>
+      <div>
+      <Image
+        onClick={() => { 
+          const findingPhonetic = meaning?.phonetics.find((item) => item?.audio.length > 0)
+          const audio = new Audio(findingPhonetic?.audio)
+          audio.play()
+        }}
+        
+        src="/items/icon-play.svg" className='cursor-pointer' alt="search" width={70} height={70} />
+        
+      </div>
+      </div>
+        {
+  meaning?.meanings &&
+  meaning?.meanings.map((item, index) => {
+    return (
+      <div
+        key={index}
+        className={`flex flex-col gap-4 ${
+          theme === 'dark' ? 'bg-black text-white' : ''
+        }`}
+      >
+        <div className='flex items-center mt-8 mb-4 gap-4'>
+          <h1 className='text-2xl font-semibold text-purple-600'>
+            {item?.partOfSpeech}
+          </h1>
+          <div className='w-full h-[2px] bg-gray-200'></div>
         </div>
+        <p className={`text-xl 
+        ${theme === 'dark' ? 'text-white' : 'text-black'}
+        `}>
+          {item.definitions.map((item, index) => {
+            return (
+              <div key={index} className='flex'>
+                <p className={`text-xl  ${theme === 'dark' ? 'text-white' : 'text-black'}`}>{item?.definition}</p>
+              </div>
+            );
+          })}
+        </p>
+        {item?.antonyms && item?.antonyms.length > 0 && (
+          <>
+            <h2 className='text-xl font-semibold text-purple-600'>antonyms</h2>
+            <p className={`
+              ${theme === 'dark' ? 'text-white' : 'text-black'}
+            text-xl flex gap-4`}>
+              {item.antonyms.map((item, index) => {
+                return (
+                  <div key={index} className='flex'>
+                    <p className={`text-xl 
+                    ${theme === 'dark' ? 'text-white' : 'text-black'}
+                    `}>{item}</p>,
+                  </div>
+                );
+              })}
+            </p>
+          </>
+        )}
+        
       </div>
+    );
+  })
+}
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+    
 
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://beta.nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800 hover:dark:bg-opacity-30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+</div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
     </main>
   )
 }
